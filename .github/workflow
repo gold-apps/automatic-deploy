@@ -1,0 +1,23 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH
+      run: |
+        echo "${{ secrets.VPS_SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+        echo "${{ secrets.VPS_SSH_PUBLIC_KEY }}" > ~/.ssh/known_hosts
+
+    - name: Deploy code
+      run: |
+        ssh root@yourserver.com 'cd /var/www/yourwebsite.com && git pull'
